@@ -20,7 +20,7 @@ export function NewsFeed() {
       const json = await res.json();
       setItems(json.data);
       setUpdatedAt(json.updatedAt);
-    } catch (e) {
+    } catch {
       setError('Newswire hit static. Please try refreshing.');
     } finally {
       setLoading(false);
