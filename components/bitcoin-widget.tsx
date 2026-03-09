@@ -21,8 +21,8 @@ export function BitcoinWidget() {
     return () => clearInterval(interval);
   }, []);
 
-  const sparkline = useMemo(() => {
-    if (!data?.history?.length) return '';
+  const chartStats = useMemo(() => {
+    if (!data?.history?.length) return null;
 
     const width = 280;
     const height = 70;
@@ -30,13 +30,17 @@ export function BitcoinWidget() {
     const max = Math.max(...data.history);
     const range = max - min || 1;
 
-    return data.history
+    const line = data.history
       .map((point, index) => {
         const x = (index / Math.max(data.history.length - 1, 1)) * width;
         const y = height - ((point - min) / range) * height;
         return `${x},${y}`;
       })
       .join(' ');
+
+    const area = `0,${height} ${line} ${width},${height}`;
+
+    return { line, area, min, max };
   }, [data]);
 
   if (!data) return <Card>Loading BTC pulse...</Card>;
@@ -56,17 +60,30 @@ export function BitcoinWidget() {
       </p>
 
       <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/40 p-2">
-        {sparkline ? (
-          <svg viewBox="0 0 280 70" className="h-20 w-full">
-            <polyline
-              fill="none"
-              stroke={positive ? '#34d399' : '#fb7185'}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              points={sparkline}
-            />
-          </svg>
+        {chartStats ? (
+          <>
+            <svg viewBox="0 0 280 70" className="h-20 w-full">
+              <defs>
+                <linearGradient id="btcArea" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor={positive ? '#34d399' : '#fb7185'} stopOpacity="0.35" />
+                  <stop offset="100%" stopColor={positive ? '#34d399' : '#fb7185'} stopOpacity="0.03" />
+                </linearGradient>
+              </defs>
+              <polygon points={chartStats.area} fill="url(#btcArea)" />
+              <polyline
+                fill="none"
+                stroke={positive ? '#34d399' : '#fb7185'}
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points={chartStats.line}
+              />
+            </svg>
+            <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+              <span>24h low {formatPrice(chartStats.min)}</span>
+              <span>24h high {formatPrice(chartStats.max)}</span>
+            </div>
+          </>
         ) : (
           <p className="px-2 py-6 text-center text-xs text-slate-400">Chart data loading...</p>
         )}
