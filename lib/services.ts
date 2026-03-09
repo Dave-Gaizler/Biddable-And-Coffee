@@ -55,18 +55,61 @@ async function fetchYahooQuotes() {
   return new Map(quotes.map((quote) => [quote.symbol, quote]));
 }
 
+async function fetchStooqQuotes() {
+  const res = await fetch('https://stooq.com/q/l/?s=amzn.us,ttd.us,googl.us&i=d', {
+    cache: 'no-store'
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to load Stooq quotes');
+  }
+
+  const csv = await res.text();
+  const rows = csv.trim().split('\n').slice(1);
+
+  const map = new Map<string, { price?: number; changePct?: number }>();
+  for (const row of rows) {
+    const [symbolRaw, , , openRaw, , , closeRaw] = row.split(',');
+    const normalized = symbolRaw?.replace('.US', '').toUpperCase();
+    const open = Number(openRaw);
+    const close = Number(closeRaw);
+
+    if (!normalized || Number.isNaN(close)) continue;
+
+    const changePct = Number.isFinite(open) && open > 0 ? ((close - open) / open) * 100 : undefined;
+    map.set(normalized, { price: close, changePct });
+  }
+
+  return map;
+}
+
 export async function fetchPartnerMetrics(): Promise<PartnerMetric[]> {
   try {
-    const quoteMap = await fetchYahooQuotes();
+    let livePriceMap: Map<string, { price?: number; changePct?: number }>;
+
+    try {
+      const yahooMap = await fetchYahooQuotes();
+      livePriceMap = new Map(
+        Array.from(yahooMap.entries()).map(([symbol, quote]) => [
+          symbol,
+          { price: quote.regularMarketPrice, changePct: quote.regularMarketChangePercent }
+        ])
+      );
+    } catch {
+      livePriceMap = await fetchStooqQuotes();
+    }
 
     const livePartners = PARTNER_COPY.map((partner) => {
-      const quote = partner.symbol ? quoteMap.get(partner.symbol) : undefined;
+      const quote = partner.symbol ? livePriceMap.get(partner.symbol) : undefined;
       return {
         ...partner,
-        price: quote?.regularMarketPrice,
-        changePct: quote?.regularMarketChangePercent
+        price: quote?.price,
+        changePct: quote?.changePct
       } satisfies PartnerMetric;
     });
+
+    const anyLive = livePartners.some((partner) => typeof partner.price === 'number');
+    if (!anyLive) throw new Error('No live partner quote values');
 
     return [
       ...livePartners,
