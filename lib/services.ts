@@ -80,6 +80,14 @@ export async function fetchPartnerMetrics(): Promise<PartnerMetric[]> {
       { name: 'Yahoo', status: 'Private / Not Publicly Traded', note: 'Yahoo DSP remains strategically relevant for omnichannel and performance-minded planning.' }
     ];
   }
+// Replace this mock with real market APIs (e.g. Finnhub, Alpha Vantage, Polygon) in production.
+export async function fetchPartnerMetrics(): Promise<PartnerMetric[]> {
+  return [
+    { name: 'Amazon', symbol: 'AMZN', price: 189.42, changePct: 0.86, status: 'Watching retail media acceleration', note: 'Ads org commentary points to increased full-funnel measurement focus.' },
+    { name: 'The Trade Desk', symbol: 'TTD', price: 88.31, changePct: -0.42, status: 'CTV signal strength remains high', note: 'UID2 and premium supply curation remain central narrative pillars.' },
+    { name: 'Google', symbol: 'GOOGL', price: 172.77, changePct: 0.33, status: 'Video + AI messaging in focus', note: 'YouTube ad products and DV360 workflow enhancements are active watch areas.' },
+    { name: 'Yahoo', status: 'Private / Not Publicly Traded', note: 'Yahoo DSP remains strategically relevant for omnichannel and performance-minded planning.' }
+  ];
 }
 
 // Replace this mock with RSS/API aggregation (NewsAPI, GDELT, custom feeds) in production.
@@ -153,4 +161,11 @@ export async function fetchBitcoin(): Promise<BitcoinSnapshot> {
       history: fallbackHistory
     };
   }
+// Replace with live crypto pricing API (CoinGecko / CoinMarketCap) in production.
+export async function fetchBitcoin() {
+  return {
+    price: 68420.17,
+    changePct: 1.52,
+    updatedAt: new Date().toISOString()
+  };
 }

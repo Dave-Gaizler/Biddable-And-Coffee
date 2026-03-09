@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bitcoin, TrendingDown, TrendingUp } from 'lucide-react';
 import { Card } from '@/components/ui';
 import { formatChange, formatPrice } from '@/lib/utils';
 
 type BTC = { price: number; changePct: number; updatedAt: string; history: number[] };
+type BTC = { price: number; changePct: number; updatedAt: string };
 
 export function BitcoinWidget() {
   const [data, setData] = useState<BTC | null>(null);
