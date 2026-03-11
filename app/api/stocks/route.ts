@@ -10,5 +10,9 @@ export async function GET() {
   } catch (error) {
     console.error('[/api/stocks] failed to fetch stock metrics', error);
     return NextResponse.json({ error: 'Unable to load stock metrics right now.' }, { status: 502 });
+    return Response.json({ data, updatedAt: new Date().toISOString() });
+  } catch (error) {
+    console.error('[/api/stocks] failed to fetch stock metrics', error);
+    return Response.json({ error: 'Unable to load stock metrics right now.' }, { status: 502 });
   }
 }

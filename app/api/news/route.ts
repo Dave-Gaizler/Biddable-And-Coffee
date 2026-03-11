@@ -11,4 +11,12 @@ export async function GET() {
     console.error('[/api/news] failed to fetch news feed', error);
     return NextResponse.json({ error: 'Unable to load news feed right now.' }, { status: 502 });
   }
+    return Response.json({ data, updatedAt: new Date().toISOString() });
+  } catch (error) {
+    console.error('[/api/news] failed to fetch news feed', error);
+    return Response.json({ error: 'Unable to load news feed right now.' }, { status: 502 });
+  }
+export async function GET() {
+  const data = await fetchNewsFeed();
+  return Response.json({ data, updatedAt: new Date().toISOString() });
 }

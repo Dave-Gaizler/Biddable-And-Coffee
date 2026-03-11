@@ -44,6 +44,11 @@ export function DashboardShell() {
       }
     };
 
+    const load = async () => {
+      const res = await fetch('/api/partners');
+      const json = await res.json();
+      setPartners(json.data);
+    };
     load();
     const interval = setInterval(load, 300000);
     return () => clearInterval(interval);
@@ -84,6 +89,7 @@ export function DashboardShell() {
           <p className="mb-3 text-sm text-slate-300">No stock data returned.</p>
         ) : null}
 
+        <h2 className="mb-3 text-2xl font-semibold">DSP Partner Pulse</h2>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {partners.map((partner) => <DspCard key={partner.name} partner={partner} />)}
         </div>

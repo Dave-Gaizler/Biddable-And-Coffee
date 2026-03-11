@@ -6,6 +6,7 @@ Premium internal dashboard MVP for daily programmatic standups.
 - Next.js + TypeScript
 - Tailwind CSS
 - Modular component architecture with API routes backed by live market/news services
+- Modular component architecture with a service layer for live-data upgrades
 
 ## Run locally
 ```bash
@@ -47,3 +48,15 @@ NEWS_API_KEY=
   - Bitcoin: every 60s
   - Stocks: every 5m
   - News: every 15m
+## Data architecture notes
+Current implementation uses mock-safe data via service wrappers in `lib/services.ts`.
+
+### Upgrade points for real APIs
+- `fetchPartnerMetrics`: connect to public market data API for AMZN/TTD/GOOGL.
+- `fetchNewsFeed`: connect to RSS/news aggregation and map to normalized feed schema.
+- `fetchBitcoin`: connect to CoinGecko/CoinMarketCap or equivalent.
+
+API routes are wired and ready:
+- `/api/partners`
+- `/api/news`
+- `/api/bitcoin`
