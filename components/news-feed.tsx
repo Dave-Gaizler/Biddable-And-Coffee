@@ -20,6 +20,8 @@ export function NewsFeed() {
       const json = await res.json();
       setItems(json.data);
       setUpdatedAt(json.updatedAt);
+    } catch (loadError) {
+      console.error('[NewsFeed] load failed', loadError);
     } catch {
       setError('Newswire hit static. Please try refreshing.');
     } finally {
@@ -29,6 +31,7 @@ export function NewsFeed() {
 
   useEffect(() => {
     load();
+    const interval = setInterval(load, 900000);
     const interval = setInterval(load, 180000);
     return () => clearInterval(interval);
   }, []);
