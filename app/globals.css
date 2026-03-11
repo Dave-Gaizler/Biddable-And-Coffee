@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-bg text-slate-100 antialiased;
+  background-image: radial-gradient(circle at 15% 20%, rgba(83, 211, 255, 0.15), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(159, 122, 234, 0.2), transparent 35%),
+    linear-gradient(120deg, #040812, #070f1f 45%, #060b17);
+  min-height: 100vh;
+}
+
+.glass {
+  @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+}
+
+.soft-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
