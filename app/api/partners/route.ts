@@ -9,4 +9,9 @@ export async function GET() {
     console.error('[/api/partners] failed to fetch stock metrics', error);
     return Response.json({ error: 'Unable to load partner metrics right now.' }, { status: 502 });
   }
+import { fetchPartnerMetrics } from '@/lib/services';
+
+export async function GET() {
+  const data = await fetchPartnerMetrics();
+  return Response.json({ data, updatedAt: new Date().toISOString() });
 }
